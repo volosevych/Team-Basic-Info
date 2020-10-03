@@ -50,6 +50,27 @@ function teamBasicInfo() {
         }
     ];
 };
+
+const teamSpecifInfo = {
+    manager: {
+        type: "input",
+        name: "officeNumber",
+        message: "What is the office number?",
+        validate: validate.string
+    },
+    intern: {
+        type: "input",
+        name: "school",
+        message: "What school did they attend?",
+        validate: validate.string
+    },
+    ingineer: {
+        type: "input",
+        name: "github",
+        message: "What is your GitHub profile name?",
+        validate: validate.string
+    }
+};
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 

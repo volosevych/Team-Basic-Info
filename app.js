@@ -10,7 +10,34 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+// valid info check 
+const validate = {
+    string: (inp) => {
+        if(inp == "") {
+            return "Please Enter Valid Information";
+        }
+        return true;
+    },
 
+    email: (inp) => {
+        let format = inp.match(/\S+@\S+\.\S+/g);
+        if (!format) {
+            return "Please Enter a Valid Email"
+        }
+        return true;
+    }
+};
+
+function teamBasicInfo() {
+    return [
+        {
+            type: "input",
+            name: "name",
+            message: `What is the name of the ${title}?`,
+            validate: validate.string
+        }
+    ]
+};
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 

@@ -35,8 +35,20 @@ function teamBasicInfo() {
             name: "name",
             message: `What is the name of the ${title}?`,
             validate: validate.string
+        },
+        {
+            type: "input",
+            name: "id",
+            message: `What is the ${title}'s id?`,
+            validate: validate.string 
+        },
+        {
+            type: "input",
+            name: "email",
+            message: `What is the ${title}'s email?`,
+            validate: validate.email;
         }
-    ]
+    ];
 };
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)

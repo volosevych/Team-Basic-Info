@@ -111,4 +111,22 @@ function manage() {
         };
         typeCheck();
     })
-}
+};
+
+function typeCheck() {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'type',
+                message: "What type of employee would you like to add?",
+                choices: ['Intern', 'Engineer']
+            }
+        ]).then(data => {
+            if (data.type == 'Intern') {
+                subHuman();
+            } else if (data.type == 'Engineer') {
+                engin();
+            };
+        });
+};

@@ -13,7 +13,7 @@ const render = require("./lib/htmlRenderer");
 // valid info check 
 const validate = {
     string: (inp) => {
-        if(inp == "") {
+        if (inp == "") {
             return "Please Enter Valid Information";
         }
         return true;
@@ -29,8 +29,7 @@ const validate = {
 };
 
 function teamBasicInfo(title) {
-    return [
-        {
+    return [{
             type: "input",
             name: "name",
             message: `What is the name of the ${title}?`,
@@ -40,7 +39,7 @@ function teamBasicInfo(title) {
             type: "input",
             name: "id",
             message: `What is the ${title}'s id?`,
-            validate: validate.string 
+            validate: validate.string
         },
         {
             type: "input",
@@ -79,21 +78,19 @@ const newEmployeer = {
     message: "Would you like to add another employee?"
 };
 
-function start () {
+function start() {
     inquirer
-        .prompt([
-            {
-                type: "confirm",
-                name: "start",
-                message: "Start by adding information on the team manager",
-            } 
-        ]).then(function (data) {
+        .prompt([{
+            type: "confirm",
+            name: "start",
+            message: "Start by adding information on the team manager",
+        }]).then(function (data) {
             if (!data.start) {
                 return false;
             }
             manage()
-        });    
-}; 
+        });
+};
 
 function manage() {
     let mangr = teamBasicInfo("manager")
@@ -101,28 +98,26 @@ function manage() {
     mangr.push(teamSpecifInfo.manager, more)
 
     inquirer
-    .prompt(mangr)
-    .then(function(data) {
-        const man = new Manager(data.name, data.id, data.email, data.officeNumber)
+        .prompt(mangr)
+        .then(function (data) {
+            const man = new Manager(data.name, data.id, data.email, data.officeNumber)
 
-        empData.push(man);
-        if(!data.more) {
-            return renderer();
-        };
-        typeCheck();
-    })
+            empData.push(man);
+            if (!data.more) {
+                return renderer();
+            };
+            typeCheck();
+        })
 };
 
 function typeCheck() {
     inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'type',
-                message: "What type of employee would you like to add?",
-                choices: ['Intern', 'Engineer']
-            }
-        ]).then(data => {
+        .prompt([{
+            type: 'list',
+            name: 'type',
+            message: "What type of employee would you like to add?",
+            choices: ['Intern', 'Engineer']
+        }]).then(data => {
             if (data.type == 'Intern') {
                 subHuman();
             } else if (data.type == 'Engineer') {
@@ -137,13 +132,46 @@ function subHuman() {
     mangr.push(teamSpecifInfo.intern, more)
 
     inquirer
-    .prompt(mangr)
-    .then(function (data) {
-        const sub = new Intern(data.name, data.id, data.email, data.school);
-        empData.push(sub);
-        if(!data.more) {
-            return renderer();
+        .prompt(mangr)
+        .then(function (data) {
+            const sub = new Intern(data.name, data.id, data.email, data.school);
+            empData.push(sub);
+            if (!data.more) {
+                return renderer();
+            };
+            typeCheck();
+        })
+};
+
+function engin() {
+    let v8 = teamBasicInfo("engineer")
+
+    v8.push(teamSpecifInfo.engineer, more)
+
+    inquirer
+        .prompt(v8)
+        .then(function (data) {
+            const colleague = new Engineer(data.name, data.id, data.email, data.guthub);
+
+            empData.push(colleague);
+            if (!data.more) {
+                return renderer();
+            };
+        })
+};
+
+function renderer() {
+
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR);
+    };
+    
+    fs.writeFile(outputPath, render(empData), err => {
+        if (err) {
+            throw err;
         };
-        typeCheck();
-    })
-}
+        console.log("Your file has been created!");
+    });
+};
+
+start();

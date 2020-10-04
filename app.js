@@ -5,12 +5,11 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 
+const render = require("./lib/htmlRenderer");
+
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
-const render = require("./lib/htmlRenderer");
-
-// valid info check 
 const validate = {
     string: (inp) => {
         if (inp == "") {
@@ -18,17 +17,19 @@ const validate = {
         }
         return true;
     },
-
     email: (inp) => {
         let format = inp.match(/\S+@\S+\.\S+/g);
         if (!format) {
-            return "Please Enter a Valid Email"
+
+            return "Please Enter a Valid Email";
         }
         return true;
     }
-};
+}
 
-function teamBasicInfo(title) {
+let empData = [];
+
+function globalQ(title) {
     return [{
             type: "input",
             name: "name",
@@ -50,10 +51,10 @@ function teamBasicInfo(title) {
     ];
 };
 
-const teamSpecifInfo = {
+const specifQ = {
     manager: {
         type: "input",
-        name: "officeNumber",
+        name: "offNum",
         message: "What is the office number?",
         validate: validate.string
     },
@@ -63,19 +64,18 @@ const teamSpecifInfo = {
         message: "What school did they attend?",
         validate: validate.string
     },
-    ingineer: {
+    engineer: {
         type: "input",
         name: "github",
-        message: "What is your GitHub profile name?",
+        message: "What is their GitHub profile name?",
         validate: validate.string
     }
 };
 
-// Adding more Employeers
-const newEmployeer = {
-    type: "confirm",
-    name: "more",
-    message: "Would you like to add another employee?"
+const more = {
+    type: 'confirm',
+    name: 'more',
+    message: 'Would you like to add another employee?'
 };
 
 function start() {
@@ -83,7 +83,7 @@ function start() {
         .prompt([{
             type: "confirm",
             name: "start",
-            message: "Start by adding information on the team manager",
+            message: "Start by adding information on the team manager.",
         }]).then(function (data) {
             if (!data.start) {
                 return false;
@@ -92,22 +92,23 @@ function start() {
         });
 };
 
-function manage() {
-    let mangr = teamBasicInfo("manager")
 
-    mangr.push(teamSpecifInfo.manager, more)
+function manage() {
+
+    let fullMan = globalQ('manager')
+
+    fullMan.push(specifQ.manager, more)
 
     inquirer
-        .prompt(mangr)
+        .prompt(fullMan)
         .then(function (data) {
-            const man = new Manager(data.name, data.id, data.email, data.officeNumber)
-
+            const man = new Manager(data.name, data.id, data.email, data.offNum);
             empData.push(man);
             if (!data.more) {
                 return renderer();
             };
             typeCheck();
-        })
+        });
 };
 
 function typeCheck() {
@@ -127,37 +128,40 @@ function typeCheck() {
 };
 
 function subHuman() {
-    let mangr = teamBasicInfo("intern")
 
-    mangr.push(teamSpecifInfo.intern, more)
+    let fullSub = globalQ('intern')
+
+    fullSub.push(specifQ.intern, more)
 
     inquirer
-        .prompt(mangr)
+        .prompt(fullSub)
         .then(function (data) {
             const sub = new Intern(data.name, data.id, data.email, data.school);
+
             empData.push(sub);
             if (!data.more) {
                 return renderer();
             };
             typeCheck();
-        })
+        });
 };
 
 function engin() {
-    let v8 = teamBasicInfo("engineer")
 
-    v8.push(teamSpecifInfo.engineer, more)
+    let v8 = globalQ('engineer')
 
+    v8.push(specifQ.engineer, more)
     inquirer
         .prompt(v8)
         .then(function (data) {
-            const colleague = new Engineer(data.name, data.id, data.email, data.guthub);
+            const audiR8 = new Engineer(data.name, data.id, data.email, data.github);
 
-            empData.push(colleague);
+            empData.push(audiR8);
             if (!data.more) {
                 return renderer();
             };
-        })
+            typeCheck();
+        });
 };
 
 function renderer() {
@@ -165,7 +169,7 @@ function renderer() {
     if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR);
     };
-    
+
     fs.writeFile(outputPath, render(empData), err => {
         if (err) {
             throw err;

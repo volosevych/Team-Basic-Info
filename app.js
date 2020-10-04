@@ -28,7 +28,7 @@ const validate = {
     }
 };
 
-function teamBasicInfo() {
+function teamBasicInfo(title) {
     return [
         {
             type: "input",
@@ -79,3 +79,36 @@ const newEmployeer = {
     message: "Would you like to add another employee?"
 };
 
+function start () {
+    inquirer
+        .prompt([
+            {
+                type: "confirm",
+                name: "start",
+                message: "Start by adding information on the team manager",
+            } 
+        ]).then(function (data) {
+            if (!data.start) {
+                return false;
+            }
+            manage()
+        });    
+}; 
+
+function manage() {
+    let mangr = teamBasicInfo("manager")
+
+    mangr.push(teamSpecifInfo.manager, more)
+
+    inquirer
+    .prompt(mangr)
+    .then(function(data) {
+        const man = new Manager(data.name, data.id, data.email, data.officeNumber)
+
+        empData.push(man);
+        if(!data.more) {
+            return renderer();
+        };
+        typeCheck();
+    })
+}

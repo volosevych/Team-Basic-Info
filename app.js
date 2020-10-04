@@ -130,3 +130,20 @@ function typeCheck() {
             };
         });
 };
+
+function subHuman() {
+    let mangr = teamBasicInfo("intern")
+
+    mangr.push(teamSpecifInfo.intern, more)
+
+    inquirer
+    .prompt(mangr)
+    .then(function (data) {
+        const sub = new Intern(data.name, data.id, data.email, data.school);
+        empData.push(sub);
+        if(!data.more) {
+            return renderer();
+        };
+        typeCheck();
+    })
+}
